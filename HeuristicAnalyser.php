@@ -252,8 +252,6 @@ class HeuristicAnalyser
      */
     public function processContent()
     {
-
-        error_log(var_export('processContent()',1));
         // Analysing code style
         // Do this, only for initial code
         if ( ! $this->evaluations->evaluations ) {
@@ -344,7 +342,6 @@ class HeuristicAnalyser
 
         // Making verdict
         $this->makeVerdict();
-        error_log(var_export($this->tokens,1));
         /** Create new instance of Heuristic\Controller for each evaluation found */
         foreach ( $this->evaluations->evaluations as $evaluation_string => $evaluation ) {
             $sub = new self(array('content' => $evaluation, 'is_evaluation' => true,), $this);
