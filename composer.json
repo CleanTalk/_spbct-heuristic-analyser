@@ -1,0 +1,19 @@
+{
+  "name": "cleantalk/spbct-heuristic-analyser",
+  "description": "CleanTalk SPBCT Heuristic Analyser classes",
+  "authors": [
+    {
+      "name": "CleanTalk Team",
+      "email": "support@cleantalk.org"
+    }
+  ],
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "cleantalk/spbct-helpers": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "CleantalkSP\\Common\\Scanner\\HeuristicAnalyser\\": "/"
+    }
+  }
+}
