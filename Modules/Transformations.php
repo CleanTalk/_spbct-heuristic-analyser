@@ -56,23 +56,38 @@ class Transformations
                 case 'gzuncompress':
                     $data = gzuncompress((string)$this->tokens->next2->value);
                     break;
+                case 'hex2bin':
+                    $data = @hex2bin((string)$this->tokens->next2->value);
+                    //data is false, check if hex string is quoted
+                    if (!$data){
+                        $data = str_replace(array('\'','"'),'',(string)$this->tokens->next2->value);
+                        $data = @hex2bin($data);
+                    }
+                    //run hex2bin transformation
+                    return $this->transformHexToBin($data);
                 default:
                     $data = false;
             }
 
+            /**
+             * This code is disabled because of incomplete of other parts except hex2bin
+             */
+            //==
             // Replacing function and data with its result
-            // decode_func('ENCODED_DATA') -> 'DECODED_DATA'
-            if ( $data ) {
-                $this->tokens->unsetTokens('next1', 'next2', 'next3');
-                $this->tokens['current'] = new Token(
-                    'T_CONSTANT_ENCAPSED_STRING',
-                    '\'' . $data . '\'',
-                    $this->tokens->current->line,
-                    $this->tokens->current->key
-                );
-
-                return true;
-            }
+            // EXAMPLE: decode_func('ENCODED_DATA') -> 'DECODED_DATA'
+            //if ( $data ) {
+            //    $this->tokens->unsetTokens('next1', 'next2', 'next3');
+            //    $this->tokens['current'] = new Token(
+            //        'T_CONSTANT_ENCAPSED_STRING',
+            //        '\'' . $data . '\'',
+            //        $this->tokens->current->line,
+            //        $this->tokens->current->key
+            //    );
+            //
+            //    return true;
+            //}
+            //==
+            //possible reasons
             /* @todo make new data merge wth tokens
              * if( $data ){
              * // Decompress from GZ gzuncompress
@@ -100,6 +115,30 @@ class Transformations
              */
         }
 
+        return false;
+    }
+
+    private function transformHexToBin($data)
+    {
+        if ( $data ) {
+            //tokenize data to from parts
+            $data = token_get_all('<?php ' . $data);
+            //unset unnecessary tokens
+            $this->tokens->unsetTokens('prev1', 'next1', 'next2', 'next3', 'next4');
+
+            //add new tokens to the line
+            for ( $i = 0; $i < count($data); $i++ ) {
+                $new_token_value         = is_array($data[$i]) & isset($data[$i][1]) ? $data[$i][1] : $data[$i];
+                $this->tokens['current'] = new Token(
+                    'T_STRING',
+                    '' . $new_token_value . '',
+                    $this->tokens->current->line,
+                    $this->tokens->current->key
+                );
+                $this->tokens->next();
+            }
+            return true;
+        }
         return false;
     }
 }

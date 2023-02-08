@@ -311,7 +311,7 @@ class HeuristicAnalyser
                 $this->variables->updateConstants($key);
 
                 // Executing decoding functions
-                //$this->transformations->decodeData($key);
+                $this->transformations->decodeData($key);
             }
 
             $this->variables->concatenate(); // Concatenates variable content if it's possible
