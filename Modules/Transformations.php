@@ -57,14 +57,8 @@ class Transformations
                     $data = gzuncompress((string)$this->tokens->next2->value);
                     break;
                 case 'hex2bin':
-                    $data = @hex2bin((string)$this->tokens->next2->value);
-                    //data is false, check if hex string is quoted
-                    if (!$data){
-                        $data = str_replace(array('\'','"'),'',(string)$this->tokens->next2->value);
-                        $data = @hex2bin($data);
-                    }
                     //run hex2bin transformation
-                    return $this->transformHexToBin($data);
+                    return $this->transformHexStringIntoTokens((string)$this->tokens->next2->value);
                 default:
                     $data = false;
             }
@@ -118,27 +112,42 @@ class Transformations
         return false;
     }
 
-    private function transformHexToBin($data)
+    /**
+     * Get new tokens to global tokens from hex string.
+     * @param string $hex_string
+     * @return bool
+     */
+    private function transformHexStringIntoTokens($hex_string)
     {
-        if ( $data ) {
-            //tokenize data to from parts
-            $data = token_get_all('<?php ' . $data);
-            //unset unnecessary tokens
-            $this->tokens->unsetTokens('prev1', 'next1', 'next2', 'next3', 'next4');
-
-            //add new tokens to the line
-            for ( $i = 0; $i < count($data); $i++ ) {
-                $new_token_value         = is_array($data[$i]) & isset($data[$i][1]) ? $data[$i][1] : $data[$i];
-                $this->tokens['current'] = new Token(
-                    'T_STRING',
-                    '' . $new_token_value . '',
-                    $this->tokens->current->line,
-                    $this->tokens->current->key
-                );
-                $this->tokens->next();
+        if ( is_string($hex_string) ) {
+            $data = @hex2bin($hex_string);
+            if ( ! $data ) {
+                //data is false, check if hex string is quoted
+                $data = str_replace(array('\'', '"'), '', $hex_string);
+                $data = @hex2bin($data);
             }
-            return true;
+            if ( $data ) {
+                //tokenize data to from parts
+                $data = @token_get_all('<?php ' . $data);
+                //unset unnecessary tokens
+                $this->tokens->unsetTokens('prev1', 'next1', 'next2', 'next3', 'next4');
+
+                //add new tokens to the line
+                for ( $i = 0; $i < count($data); $i++ ) {
+                    $new_token_value         = is_array($data[$i]) && isset($data[$i][1]) ? $data[$i][1] : $data[$i];
+                    $this->tokens['current'] = new Token(
+                        'T_STRING',
+                        '' . $new_token_value . '',
+                        $this->tokens->current->line,
+                        $this->tokens->current->key
+                    );
+                    $this->tokens->next();
+                }
+
+                return true;
+            }
         }
+        //hex2bin failed
         return false;
     }
 }
