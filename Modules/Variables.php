@@ -292,9 +292,11 @@ class Variables
                         )
                     );
                 }
-
-                // Variable in a single quotes like $a = 'value';
-                $this->variables[$this->tokens->current->value] = $variable_tokens;
+                if ( isset($this->variables[$this->tokens->current->value]) ) {
+                    $this->variables[$this->tokens->current->value]->append($variable_tokens);
+                } else {
+                    $this->variables[$this->tokens->current->value] = $variable_tokens;
+                }
             }
         }
 
@@ -497,16 +499,30 @@ class Variables
                         );
                         // Variables in double/single quotes
                     } elseif ( ! $this->tokens->next1->isTypeOf('equation') ) {
-                        $this->tokens['current'] = new Token(
-                            ! $this->tokens->prev1->value === '"' ? 'T_CONSTANT_ENCAPSED_STRING' : 'T_ENCAPSED_AND_WHITESPACE',
-                            ! $this->tokens->prev1->value === '"' ? $this->variables[$variable_name][0][1] : substr(
+                        // If the variable is within quotes
+                        if(
+                            $this->tokens->prev1->value === '"' ||
+                            $this->tokens->prev1->value === '\''
+                        ) {
+                            $this->tokens['current'] = new Token(
+                                ! $this->tokens->prev1->value === '"' ? 'T_CONSTANT_ENCAPSED_STRING' : 'T_ENCAPSED_AND_WHITESPACE',
+                                ! $this->tokens->prev1->value === '"' ? $this->variables[$variable_name][0][1] : substr(
+                                    $this->variables[$variable_name][0][1],
+                                    1,
+                                    -1
+                                ),
+                                $this->tokens->current->line,
+                                $this->tokens->current->key
+                            );
+                        // If the variable is without quotes, like integers
+                        } else {
+                            $this->tokens['current'] = new Token(
+                                $this->variables[$variable_name][0][0],
                                 $this->variables[$variable_name][0][1],
-                                1,
-                                -1
-                            ),
-                            $this->tokens->current->line,
-                            $this->tokens->current->key
-                        );
+                                $this->tokens->current->line,
+                                $this->tokens->current->key
+                            );
+                        }
                     }
                 }
             }
@@ -584,7 +600,7 @@ class Variables
     }
 
     /**
-     * Check if the given token in arrays
+     * Check if the given token in variables
      *
      * @param $token
      *
@@ -596,7 +612,7 @@ class Variables
     }
 
     /**
-     * Check if the given token in arrays
+     * Check if the given token in constants
      *
      * @param $token
      *
