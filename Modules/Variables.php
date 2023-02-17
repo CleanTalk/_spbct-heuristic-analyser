@@ -273,9 +273,10 @@ class Variables
             $this->tokens->current->type === 'T_VARIABLE' &&
             $this->tokens->next1->value === '='
         ) {
+            $variable_start = $this->tokens->searchForward($key, '=') + 1;
             $variable_end = $this->tokens->searchForward($key, ';') - 1;
             if ( $variable_end ) {
-                $variable_tokens = $this->tokens->getRange($key + 2, $variable_end);
+                $variable_tokens = $this->tokens->getRange($variable_start, $variable_end);
 
                 if (
                     count($variable_tokens) === 3 &&
