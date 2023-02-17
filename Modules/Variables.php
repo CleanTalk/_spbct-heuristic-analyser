@@ -499,7 +499,7 @@ class Variables
                             $this->tokens->current->key
                         );
                         // Variables in double/single quotes
-                    } elseif ( ! $this->tokens->next1->isTypeOf('equation') ) {
+                    } elseif ( ! $this->tokens->next1->isTypeOf('equation') && $this->tokens->next1->value !== '=' ) {
                         // If the variable is within quotes
                         if(
                             $this->tokens->prev1->value === '"' ||
