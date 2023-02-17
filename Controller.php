@@ -16,6 +16,7 @@ class Controller
      * @var Model
      */
     private $model;
+    public $final_code;
 
     public function __construct(Model $model)
     {
@@ -92,6 +93,7 @@ class Controller
             $output->status     = 'OK';
         }
 
+        $this->final_code = $scanner->deobfuscated_code;
         return $output;
     }
 

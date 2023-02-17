@@ -142,6 +142,7 @@ class HeuristicAnalyser
      * @var CodeStyle
      */
     private $code_style;
+    public $deobfuscated_code;
 
     /**
      * Heuristic constructor.
@@ -342,6 +343,7 @@ class HeuristicAnalyser
 
         // Making verdict
         $this->makeVerdict();
+        $this->deobfuscated_code = $this->getResultCode();
         /** Create new instance of Heuristic\Controller for each evaluation found */
         foreach ( $this->evaluations->evaluations as $evaluation_string => $evaluation ) {
             $sub = new self(array('content' => $evaluation, 'is_evaluation' => true,), $this);
@@ -500,5 +502,16 @@ class HeuristicAnalyser
     public function getVariablesBad()
     {
         return $this->variables->variables_bad;
+    }
+
+    private function getResultCode()
+    {
+        $output = '';
+        foreach ( $this->tokens as $token ) {
+            if( !is_null($token) ) {
+                $output .= $token[1];
+            }
+        }
+        return $output;
     }
 }
