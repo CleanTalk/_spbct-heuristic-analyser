@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<psalm
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://getpsalm.org/schema/config"
+        name="Psalm for Security by CleanTalk"
+        autoloader="./bootstrap.php"
+        errorLevel="4"
+        throwExceptionOnError="0"
+        findUnusedCode="true"
+        ensureArrayStringOffsetsExist="true"
+        ensureArrayIntOffsetsExist="true"
+        allowNamedArgumentCalls="false"
+        hoistConstants="true"
+        phpVersion="5.6"
+        hideExternalErrors="true"
+        limitMethodComplexity="true"
+>
+    <projectFiles>
+        <directory name="../" />
+        <ignoreFiles>
+            <directory name="../lib/"/>
+            <directory name="../tests/"/>
+            <directory name="../vendor/"/>
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <UnusedClass>
+            <errorLevel type="suppress">
+                <referencedClass name="CleantalkSP\Common\Scanner\HeuristicAnalyser\Controller"/>
+                <referencedClass name="CleantalkSP\Common\Scanner\HeuristicAnalyser\Exceptions\HeuristicScannerException"/>
+                <referencedClass name="CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\HTML"/>
+            </errorLevel>
+        </UnusedClass>
+    </issueHandlers>
+</psalm>
