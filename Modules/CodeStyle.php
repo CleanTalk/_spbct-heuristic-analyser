@@ -1,6 +1,6 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules;
+namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules;
 
 class CodeStyle
 {

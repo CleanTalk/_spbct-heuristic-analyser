@@ -12,10 +12,10 @@ composer require cleantalk/spbct-heuristic-analyser
 // Require composer autoloader
 require_once 'vendor/autoload.php';
 
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Controller;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Structures\FileInfo;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Controller;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Structures\FileInfo;
 
-// MyModel class need to be extended \CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Model\Model
+// MyModel class need to be extended \CleantalkSP\Common\Scanner\HeuristicAnalyser\Model\Model
 $my_model = new myMoodel();
 
 // Instantiate the scanner module

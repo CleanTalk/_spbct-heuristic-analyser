@@ -1,8 +1,8 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\DataStructures;
+namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures;
 
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Structures\TokenGroups;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Structures\TokenGroups;
 
 /**
  * @property string $type

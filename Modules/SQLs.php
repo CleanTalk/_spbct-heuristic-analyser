@@ -1,8 +1,8 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules;
+namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules;
 
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\DataStructures\ExtendedSplFixedArray;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures\ExtendedSplFixedArray;
 
 class SQLs
 {

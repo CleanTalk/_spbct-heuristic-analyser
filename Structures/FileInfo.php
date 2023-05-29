@@ -1,6 +1,6 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Structures;
+namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Structures;
 
 class FileInfo
 {

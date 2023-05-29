@@ -1,17 +1,17 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser;
+namespace CleantalkSP\Common\Scanner\HeuristicAnalyser;
 
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\DataStructures\ExtendedSplFixedArray;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules\CodeStyle;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules\Evaluations;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules\Includes;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules\Simplifier;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules\SQLs;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules\Strings;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules\Tokens;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules\Transformations;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules\Variables;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures\ExtendedSplFixedArray;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\CodeStyle;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Evaluations;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Includes;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Simplifier;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\SQLs;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Strings;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Tokens;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Transformations;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Variables;
 
 /**
  * Class Heuristic

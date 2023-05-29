@@ -1,6 +1,6 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Exceptions;
+namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Exceptions;
 
 class HeuristicScannerException extends \Exception
 {

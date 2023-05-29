@@ -1,12 +1,12 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser;
+namespace CleantalkSP\Common\Scanner\HeuristicAnalyser;
 
 use CleantalkSP\Common\Helpers\Arr;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Exceptions\HeuristicScannerException;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Model\Model;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Structures\FileInfo;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Structures\Verdict;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Exceptions\HeuristicScannerException;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Model\Model;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Structures\FileInfo;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Structures\Verdict;
 
 class Controller
 {

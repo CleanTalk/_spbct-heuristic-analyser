@@ -1,6 +1,6 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\DataStructures;
+namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures;
 
 /**
  * Class ExtendedSplFixedArray

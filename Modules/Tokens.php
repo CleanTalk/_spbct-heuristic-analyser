@@ -1,10 +1,10 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules;
+namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules;
 
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\DataStructures\ExtendedSplFixedArray;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\DataStructures\Token;
-use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Structures\TokenGroups;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures\ExtendedSplFixedArray;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures\Token;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Structures\TokenGroups;
 
 /**
  * @property Token|null $prev4 Iteration Token
