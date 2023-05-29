@@ -1,7 +1,7 @@
 {
   "name": "cleantalk/spbct-heuristic-analyser",
   "description": "CleanTalk SPBCT Heuristic Analyser classes",
-  "type": "cleantalk-spbct-lib",
+  "type": "cleantalk-spbct-scanner",
   "authors": [
     {
       "name": "CleanTalk Team",
