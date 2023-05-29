@@ -16,5 +16,10 @@
     "psr-4": {
       "CleantalkSP\\Common\\Scanner\\HeuristicAnalyser\\": "/"
     }
+  },
+  "config": {
+    "allow-plugins": {
+      "cleantalk/spbct-installer": true
+    }
   }
 }
