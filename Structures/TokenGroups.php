@@ -1,6 +1,6 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Structures;
+namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Structures;
 
 /**
  * @psalm-suppress PossiblyUnusedProperty

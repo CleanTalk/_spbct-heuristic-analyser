@@ -1,8 +1,8 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules;
+namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Modules;
 
-use CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures\Token;
+use CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\DataStructures\Token;
 
 class Strings
 {

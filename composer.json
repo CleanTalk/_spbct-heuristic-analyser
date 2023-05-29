@@ -15,7 +15,7 @@
   },
   "autoload": {
     "psr-4": {
-      "CleantalkSP\\Common\\Scanner\\HeuristicAnalyser\\": "/"
+      "CleantalkSP\\Common\\Scanner\\SpbctHeuristicAnalyser\\": "/"
     }
   },
   "config": {

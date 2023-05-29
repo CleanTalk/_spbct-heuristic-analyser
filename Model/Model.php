@@ -1,6 +1,6 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Model;
+namespace CleantalkSP\Common\Scanner\SpbctHeuristicAnalyser\Model;
 
 abstract class Model
 {
