@@ -1,7 +1,5 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\HeuristicAnalyser;
-
 use CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures\Token;
 use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Tokens;
 use PHPUnit\Framework\TestCase;

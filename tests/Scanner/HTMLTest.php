@@ -1,7 +1,7 @@
 <?php
 
-namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules;
-
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\HTML;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Tokens;
 use PHPUnit\Framework\TestCase;
 
 class HTMLTest extends TestCase
