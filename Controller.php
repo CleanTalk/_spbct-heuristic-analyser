@@ -74,7 +74,7 @@ class Controller
                 'DANGER',
                 $verdict
             ) ? 'DANGER' : 'SUSPICIOUS');
-            $output->status     = array_key_exists('CRITICAL', $verdict) || array_key_exists('SIGNATURES', $verdict) || array_key_exists('SUSPICIOUS', $verdict)  ? 'INFECTED' : 'OK';
+            $output->status     = array_key_exists('CRITICAL', $verdict) || array_key_exists('SIGNATURES', $verdict) || array_key_exists('DANGER', $verdict) || array_key_exists('SUSPICIOUS', $verdict)  ? 'INFECTED' : 'OK';
         } else {
             $output->weak_spots = null;
             $output->severity   = null;
