@@ -299,8 +299,8 @@ class HeuristicAnalyser
         // Do this, only for initial code
         if ( ! $this->evaluations->evaluations ) {
             if ( $this->extension !== 'html' && $this->extension !== 'js' ) {
-                $this->code_style->analiseLineLengths($this->file_content);
-                $this->code_style->analiseUnreadableCode($this->file_content);
+                $this->code_style->analyseLineLengths($this->file_content);
+                $this->code_style->analyseUnreadableCode($this->file_content);
             }
 
             foreach ( $this->tokens as $key => $_current_token ) {
