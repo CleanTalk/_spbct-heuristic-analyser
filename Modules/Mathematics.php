@@ -7,6 +7,12 @@ use CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures\Token;
 
 class Mathematics
 {
+    /**
+     *
+     * @var Tokens
+     */
+    private $tokens;
+
     public function __construct(Tokens $tokens)
     {
         $this->tokens = $tokens;
@@ -16,6 +22,7 @@ class Mathematics
      * Convert mathematics expression to the final value
      *
      * @return array
+     * @psalm-suppress PossiblyUnusedReturnValue
      */
     public function evaluateMathExpressions()
     {
@@ -59,9 +66,7 @@ class Mathematics
                             $this->tokens->$index_to_insert->line,
                             $this->tokens->$index_to_insert->key
                         );
-
                     }
-
                 }
             }
         }
@@ -80,7 +85,6 @@ class Mathematics
         $closing_bracket_position = $this->tokens->searchForward($start_position, $closing_bracket);
         $tokens_inside_brackets = $this->tokens->getRange($start_position, $closing_bracket_position - 1);
         if ( $closing_bracket === ')' ) {
-
             // Loop: If there are inner brackets - continue searching end of the expression
             $inner_brackets = [];
             do {

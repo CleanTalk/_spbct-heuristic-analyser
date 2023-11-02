@@ -128,6 +128,10 @@ class HeuristicAnalyser
     );
 
     /** Modules */
+    /**
+     * @var Mathematics
+     */
+    private $mathematics;
 
     /**
      * @var Simplifier
