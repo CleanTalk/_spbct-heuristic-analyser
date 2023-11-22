@@ -126,12 +126,6 @@ class HeuristicAnalyser
         'base64_encode'
     );
 
-    /** Modules */
-    /**
-     * @var Mathematics
-     */
-    private $mathematics;
-
     /**
      * @var Simplifier
      */
