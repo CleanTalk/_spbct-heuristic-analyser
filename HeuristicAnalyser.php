@@ -179,6 +179,11 @@ class HeuristicAnalyser
     private $entropyAnalyser;
 
     /**
+     * @var Mathematics
+     */
+    private $mathematics;
+
+    /**
      * Heuristic constructor.
      * Getting common info about file|text and it's content
      *
