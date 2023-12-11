@@ -32,7 +32,7 @@ class Mathematics
         ];
         $math_expressions = [];
         foreach ( $brackets as $bracket ) {
-            if ( $this->tokens->current->value === $bracket[0] ) {
+            if ( $this->tokens->current->value === $bracket[0] && $this->tokens->next1->value !== $bracket[1] ) {
                 $tokens_inside_brackets = $this->getTokensInsideBrackets($bracket[1]);
 
                 if ( count($tokens_inside_brackets) > 1 ) {
@@ -84,6 +84,7 @@ class Mathematics
         $start_position = $this->tokens->next1[3];
         $closing_bracket_position = $this->tokens->searchForward($start_position, $closing_bracket);
         $tokens_inside_brackets = $this->tokens->getRange($start_position, $closing_bracket_position - 1);
+
         if ( $closing_bracket === ')' ) {
             // Loop: If there are inner brackets - continue searching end of the expression
             $inner_brackets = [];
@@ -95,9 +96,11 @@ class Mathematics
                     array_pop($inner_brackets);
                 }
 
-                foreach ( $tokens_inside_brackets as $token ) {
-                    if ( $token[1] === '(' ) {
-                        $inner_brackets[] = $token[1];
+                if ( $tokens_inside_brackets ) {
+                    foreach ( $tokens_inside_brackets as $token ) {
+                        if ( $token[1] === '(' ) {
+                            $inner_brackets[] = $token[1];
+                        }
                     }
                 }
             } while ( count($inner_brackets) );
