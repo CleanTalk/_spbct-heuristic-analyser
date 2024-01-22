@@ -9,6 +9,7 @@ use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Entropy;
 use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Evaluations;
 use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\FunctionsDecryptorService;
 use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Includes;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Mathematics;
 use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Simplifier;
 use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\SQLs;
 use CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules\Strings;
@@ -122,12 +123,6 @@ class HeuristicAnalyser
         'base64_encode'
     );
 
-    /** Modules */
-    /**
-     * @var Mathematics
-     */
-    private $mathematics;
-
     /**
      * @var Simplifier
      */
@@ -180,6 +175,11 @@ class HeuristicAnalyser
     private $entropyAnalyser;
 
     /**
+     * @var Mathematics
+     */
+    private $mathematics;
+
+    /**
      * Heuristic constructor.
      * Getting common info about file|text and it's content
      *
@@ -228,6 +228,7 @@ class HeuristicAnalyser
 
         $this->tokens          = new Tokens($this->file_content);
         $this->simplifier      = new Simplifier($this->tokens);
+        $this->mathematics     = new Mathematics($this->tokens);
         $this->strings         = new Strings($this->tokens);
         $this->variables       = new Variables($this->tokens);
         $this->sqls            = new SQLs($this->tokens, $this->variables);
@@ -332,6 +333,7 @@ class HeuristicAnalyser
             foreach ( $this->tokens as $key => $_current_token ) {
                 // Actions which could possibly delete tokens from the set
                 $this->simplifier->stripWhitespaces($key);
+                $this->mathematics->evaluateMathExpressions();
                 $this->strings->convertToSimple($key);
                 $this->strings->convertChrFunctionToString($key);
             }
@@ -585,8 +587,8 @@ class HeuristicAnalyser
         }
 
         return $token->type === 'T_CONSTANT_ENCAPSED_STRING' &&
-               is_callable(trim((string)$token->value, '\'')) &&
-               in_array(trim((string)$token->value, '\''), $this->dangerous_decoded_values, true);
+            is_callable(trim((string)$token->value, '\'')) &&
+            in_array(trim((string)$token->value, '\''), $this->dangerous_decoded_values, true);
     }
 
     private function checkingGluedToken(DataStructures\Token $token)
@@ -596,7 +598,7 @@ class HeuristicAnalyser
         }
 
         return $token->type === 'T_CONSTANT_ENCAPSED_STRING' &&
-               stripos((string)$token->value, '<script');
+            stripos((string)$token->value, '<script');
     }
 
     private function checkingDecryptedToken(DataStructures\Token $token)
