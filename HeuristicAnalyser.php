@@ -472,7 +472,7 @@ class HeuristicAnalyser
                     true
                 );
                 $this->verdict['CRITICAL'][$this->tokens->current->line][] = $this->dangerous_decoded_values[$found_malware_key];
-            }} elseif ($this->checkingDecryptedToken($this->tokens->current)) {
+            } elseif ($this->checkingDecryptedToken($this->tokens->current)) {
                 $this->verdict['CRITICAL'][$this->tokens->current->line][] = 'the function contains suspicious arguments';
             }
         }
