@@ -62,13 +62,32 @@ class CodeStyle
 
         for ( $line_num = 1; isset($lines[$line_num - 1]); $line_num++ ) {
             try {
-                if ( strlen($lines[$line_num - 1]) > self::CRITICAL_CODE_STRING_LENGTH ) {
+                $line = $lines[$line_num - 1];
+                if ($this->analyseLineLengthsIsExceptions($line)) {
+                    continue;
+                }
+                if ( strlen($line) > self::CRITICAL_CODE_STRING_LENGTH ) {
                     $this->critical_long_line_nums[] = $line_num;
                 }
             } catch (\Exception $_e) {
                 continue;
             }
         }
+    }
+
+    /**
+     * Check exceptions for long line
+     *
+     * @param string $line
+     * @return bool
+     */
+    public function analyseLineLengthsIsExceptions($line)
+    {
+        if (preg_match('#^\s*<path\s+d="[^$][.\w\s-]+"\s*\/>#', $line, $match)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function analyseUnreadableCode(&$content)
@@ -179,18 +198,22 @@ class CodeStyle
         $words = isset($words[0]) ? $words[0] : [];
 
         $words = array_filter($words, function ($word) {
-            return strlen($word) > 5;
+            return strlen($word) > 5 && strlen($word) < 50;
         });
         $words = array_values($words);
 
         $words_weight = [];
         foreach ($words as $word) {
             $words_weight[$word] = 0;
+            $skip_caps_checking = false;
             if (strpos($word, '+') !== false) {
                 $words_weight[$word] += 1;
             }
             $lower_word = strtolower($word);
-            if (strlen($lower_word) - similar_text($lower_word, $word) > 3) {
+            if ( strtolower($word) === $word || strtoupper($word) === $word ) {
+                $skip_caps_checking = true;
+            }
+            if ( ! $skip_caps_checking && strlen($lower_word) - similar_text($lower_word, $word) > 3 ) {
                 $words_weight[$word] += 1;
             }
             if (preg_match('#[^\d]\d+[\w]#', $word)) {
