@@ -85,14 +85,13 @@ class HeuristicAnalyser
     public $looks_safe = false;
 
     private $bad_constructs = array(
-        'CRITICAL'   => array(
+        'SUSPICIOUS' => array(
+            'str_rot13',
+            'syslog',
             'eval',
             'assert',
             'create_function',
             'shell_exec',
-            // 'unserialize',
-        ),
-        'DANGER'     => array(
             'system',
             'passthru',
             'proc_open',
@@ -100,10 +99,7 @@ class HeuristicAnalyser
             'pcntl_exec',
             'popen',
             '`',
-        ),
-        'SUSPICIOUS' => array(
-            'str_rot13',
-            'syslog',
+            // 'unserialize',
         ),
     );
 
@@ -298,6 +294,11 @@ class HeuristicAnalyser
      */
     public function processContent()
     {
+        // Skip files does not contain PHP code
+        if ( $this->extension !== 'php' && ! $this->code_style->hasPHPOpenTags() ) {
+            return;
+        }
+
         // Analysing code style
         // Do this, only for initial code
         if ( ! $this->evaluations->evaluations ) {
@@ -447,14 +448,14 @@ class HeuristicAnalyser
 
                         // If common bad structures found, then check containment for superglobals
                         if ($found_malware_key !== false && $this->checkingSuperGlobalsInTheSystemCommands($this->tokens->current)) {
-                            $this->verdict['CRITICAL'][$this->tokens->current->line][] = 'global variables in a sys command';
+                            $this->verdict['SUSPICIOUS'][$this->tokens->current->line][] = 'global variables in a sys command';
                             break;
                         }
 
                         // If the current token is backtick, so we have to check shell command existing inside the backticks.
                         if ( $current_token_value === '`' ) {
                             if ( $this->checkingShellCommand($this->tokens->current) ) {
-                                $this->verdict['CRITICAL'][$this->tokens->current->line][] = 'shell command inside the backticks';
+                                $this->verdict['SUSPICIOUS'][$this->tokens->current->line][] = 'shell command inside the backticks';
                             }
                             break;
                         }
@@ -471,9 +472,9 @@ class HeuristicAnalyser
                     $this->dangerous_decoded_values,
                     true
                 );
-                $this->verdict['CRITICAL'][$this->tokens->current->line][] = $this->dangerous_decoded_values[$found_malware_key];
+                $this->verdict['SUSPICIOUS'][$this->tokens->current->line][] = $this->dangerous_decoded_values[$found_malware_key];
             } elseif ($this->checkingDecryptedToken($this->tokens->current)) {
-                $this->verdict['CRITICAL'][$this->tokens->current->line][] = 'the function contains suspicious arguments';
+                $this->verdict['SUSPICIOUS'][$this->tokens->current->line][] = 'the function contains suspicious arguments';
             }
         }
 
@@ -481,7 +482,7 @@ class HeuristicAnalyser
         foreach ( $this->includes->includes as $include ) {
             if ( $include['status'] === false ) {
                 if ( $include['not_url'] === false && $include['ext_good'] === false ) {
-                    $this->verdict['CRITICAL'][$include['string']][] = substr(
+                    $this->verdict['SUSPICIOUS'][$include['string']][] = substr(
                         $this->tokens->glueTokens(ExtendedSplFixedArray::createFromArray($include['include'])),
                         0,
                         255
@@ -589,8 +590,8 @@ class HeuristicAnalyser
         }
 
         return $token->type === 'T_CONSTANT_ENCAPSED_STRING' &&
-               is_callable(trim((string)$token->value, '\'')) &&
-               in_array(trim((string)$token->value, '\''), $this->dangerous_decoded_values, true);
+            is_callable(trim((string)$token->value, '\'')) &&
+            in_array(trim((string)$token->value, '\''), $this->dangerous_decoded_values, true);
     }
 
     private function checkingDecryptedToken(DataStructures\Token $token)
