@@ -84,9 +84,11 @@ class NoPHPCodeTest extends TestCase
 
     public function testHasPHPCodeBadFileShortOpenTag()
     {
-        $verdict = $this->heuristic_scanner->scanFile($this->files_list[__FUNCTION__], $this->current_dir);
-        $this->assertEquals('INFECTED', $verdict->status);
-        $this->assertEquals('SUSPICIOUS', $verdict->severity);
+        if ( ini_get('short_open_tag') ) {
+            $verdict = $this->heuristic_scanner->scanFile($this->files_list[__FUNCTION__], $this->current_dir);
+            $this->assertEquals('INFECTED', $verdict->status);
+            $this->assertEquals('SUSPICIOUS', $verdict->severity);
+        }
     }
 
     public function testHasPHPCodeGoodFile()
