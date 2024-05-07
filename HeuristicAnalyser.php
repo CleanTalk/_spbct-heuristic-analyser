@@ -341,6 +341,7 @@ class HeuristicAnalyser
                 $this->mathematics->evaluateMathExpressions();
                 $this->strings->convertToSimple($key);
                 $this->strings->convertChrFunctionToString($key);
+                $this->strings->convertFileGetContentsToString($this->path);
             }
 
             foreach ( $this->tokens as $key => $_current_token ) {
