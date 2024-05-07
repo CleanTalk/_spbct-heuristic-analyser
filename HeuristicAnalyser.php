@@ -328,6 +328,7 @@ class HeuristicAnalyser
                 $this->mathematics->evaluateMathExpressions();
                 $this->strings->convertToSimple($key);
                 $this->strings->convertChrFunctionToString($key);
+                $this->strings->convertFileGetContentsToString($this->path);
             }
 
             foreach ( $this->tokens as $key => $_current_token ) {
@@ -351,7 +352,7 @@ class HeuristicAnalyser
 
                 // Executing decoding functions
                 // @ToDo there was many false positives!
-                // $this->transformations->decodeData($key);
+                $this->transformations->decodeData($key);
             }
 
             $this->variables->concatenate(); // Concatenates variable content if it's possible
