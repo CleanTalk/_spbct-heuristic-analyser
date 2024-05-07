@@ -351,7 +351,6 @@ class HeuristicAnalyser
                 $this->variables->updateConstants($key);
 
                 // Executing decoding functions
-                // @ToDo there was many false positives!
                 $this->transformations->decodeData($key);
             }
 
