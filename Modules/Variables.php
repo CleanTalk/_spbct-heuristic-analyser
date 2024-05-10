@@ -511,7 +511,7 @@ class Variables
 
                 $this->tokens['current'] = new Token(
                     'T_CONSTANT_ENCAPSED_STRING',
-                    '\'' . trim($var_expression[2][1][$this->tokens->next2->value+1], '\'\"') . '\'',
+                    '\'' . trim($var_expression[2][1][$this->tokens->next2->value + 1], '\'\"') . '\'',
                     $this->tokens->current->line,
                     $this->tokens->current->key
                 );
