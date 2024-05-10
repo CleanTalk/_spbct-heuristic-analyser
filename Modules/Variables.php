@@ -470,7 +470,7 @@ class Variables
                 $var_first_declaration = $this->tokens->searchForward(0, (string)$this->tokens->current->value); // 10
 
                 if ( ! $var_first_declaration ) {
-                    return false;
+                    return;
                 }
 
                 $var_expression = $this->tokens->getRange(
@@ -501,7 +501,7 @@ class Variables
                 $var_first_declaration = $this->tokens->searchForward(0, (string)$this->tokens->current->value); // 10
 
                 if ( ! $var_first_declaration ) {
-                    return false;
+                    return;
                 }
 
                 $var_expression = $this->tokens->getRange(
