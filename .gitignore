@@ -4,4 +4,3 @@ composer.lock
 package-lock.json
 /lib/
 /bad/
-/index.php
