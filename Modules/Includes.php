@@ -154,10 +154,24 @@ class Includes
         $properties['error_free'] = $this->tokens->prev1->value !== '@';
         $properties['good']       = ! $this->variables_handler->isSetOfTokensHasBadVariables($include);
 
-        // Include is a single string, so we can continue to analise
+        $include_value = '';
+
         if ( count($include) === 1 && $include[0]->type === 'T_CONSTANT_ENCAPSED_STRING' ) {
+            // Include is a single string like `include 'file.php';`
+            $include_value = $include[0]->value;
+        } elseif (
+            // Include is a single string within bracers like `include('file.php');`
+            count($include) === 3 &&
+            $include[0]->value === '(' &&
+            $include[1]->type === 'T_CONSTANT_ENCAPSED_STRING' &&
+            $include[2]->value === ')'
+        ) {
+            $include_value = $include[1]->value;
+        }
+
+        if ( $include_value ) {
             // Extracting path from the string token. Cutting quotes.
-            $properties['path']    = substr($include[0]->value, 1, -1);
+            $properties['path']    = substr($include_value, 1, -1);
             $properties['not_url'] = ! filter_var($properties['path'], FILTER_VALIDATE_URL);
 
             // If the filepath is absolute.
