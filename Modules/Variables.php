@@ -363,8 +363,9 @@ class Variables
      *
      * @param int $key
      *
-     * @return false returns false if current token( $tokens[ $key ] ) was unset or true if isn't
+     * @return false returns false if fake substr construct not found
      * @psalm-suppress NullPropertyFetch
+     * @psalm-suppress TypeDoesNotContainType
      * @psalm-suppress PossiblyUnusedReturnValue
      */
     public function updateVariablesEquationByFakeSubstr($key)
