@@ -389,7 +389,7 @@ class Variables
                     isset($this->variables[$variable_tokens[2]->value])
                 ) {
                     $variable_token = $this->variables[$variable_tokens[2]->value];
-                    $variable_tokens = array(
+                    $replace_variable_token = array(
                         new Token(
                             'T_CONSTANT_ENCAPSED_STRING',
                             '\'' . trim($variable_token[0]->value, '"\'') . '\'',
@@ -397,16 +397,11 @@ class Variables
                             $variable_tokens[1]->key
                         )
                     );
-                }
 
-                if ( isset($this->variables[$this->tokens->current->value]) ) {
-                    $this->variables[$this->tokens->current->value]->append($variable_tokens);
-                } else {
-                    $this->variables[$this->tokens->current->value] = $variable_tokens;
+                    $this->variables[$this->tokens->current->value] = $replace_variable_token;
                 }
             }
         }
-
         return false;
     }
 
