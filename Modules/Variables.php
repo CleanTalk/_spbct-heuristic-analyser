@@ -356,6 +356,61 @@ class Variables
     }
 
     /**
+     * Equation by unnecessary substr function
+     * $a = substr($string, 0);
+     *
+     * substr($string, 0) is equivalent to $string
+     *
+     * @param int $key
+     *
+     * @return false returns false if current token( $tokens[ $key ] ) was unset or true if isn't
+     * @psalm-suppress NullPropertyFetch
+     * @psalm-suppress PossiblyUnusedReturnValue
+     */
+    public function updateVariablesEquationByFakeSubstr($key)
+    {
+        if (
+            $this->tokens->current->type === 'T_VARIABLE' &&
+            $this->tokens->next1->value === '='
+        ) {
+            $variable_start = $this->tokens->searchForward($key, '=') + 1;
+            $variable_end = $this->tokens->searchForward($key, ';') - 1;
+            if ( $variable_end ) {
+                $variable_tokens = $this->tokens->getRange($variable_start, $variable_end);
+
+                if (
+                    count($variable_tokens) === 6 &&
+                    $variable_tokens[0]->value === 'substr' &&
+                    $variable_tokens[1]->value === '(' &&
+                    $variable_tokens[2]->type === 'T_VARIABLE' &&
+                    $variable_tokens[3]->value === ',' &&
+                    ($variable_tokens[4]->type === 'T_LNUMBER' && $variable_tokens[4]->value === '0') &&
+                    $variable_tokens[5]->value === ')' &&
+                    isset($this->variables[$variable_tokens[2]->value])
+                ) {
+                    $variable_token = $this->variables[$variable_tokens[2]->value];
+                    $variable_tokens = array(
+                        new Token(
+                            'T_CONSTANT_ENCAPSED_STRING',
+                            '\'' . trim($variable_token[0]->value, '"\'') . '\'',
+                            $variable_tokens[1]->line,
+                            $variable_tokens[1]->key
+                        )
+                    );
+                }
+
+                if ( isset($this->variables[$this->tokens->current->value]) ) {
+                    $this->variables[$this->tokens->current->value]->append($variable_tokens);
+                } else {
+                    $this->variables[$this->tokens->current->value] = $variable_tokens;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Search and remember constants definition
      * define('CONSTANT_NAME','CONSTANT_VALUE'
      *
