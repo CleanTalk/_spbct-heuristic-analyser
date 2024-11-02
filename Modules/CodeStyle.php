@@ -28,6 +28,10 @@ class CodeStyle
      */
     const RANDOM_MAX_WORD_LEN = 5;
     /**
+     * @const Sensitivity for comments noise
+     */
+    const COMMENTS_NOISE_THRESHOLD = 1.00;
+    /**
      * @const Sensitivity for random total weight
      */
     const RANDOM_TOTAL_WEIGHT_THRESHOLD = 1.00;
@@ -169,11 +173,11 @@ class CodeStyle
     {
         $proportion_spec_symbols = $this->proportionOfSpecialSymbols();
         $weight = $this->getWeightOfRandomCharStructures($content);
+        $comments_noise = $this->getWeightOfCommentsNoise($content);
 
-        if (
-            $proportion_spec_symbols >= self::SPECIAL_CHARS_PROPORTION_THRESHOLD
-            ||
-            $weight > self::RANDOM_TOTAL_WEIGHT_THRESHOLD
+        if ($proportion_spec_symbols >= self::SPECIAL_CHARS_PROPORTION_THRESHOLD ||
+            $weight > self::RANDOM_TOTAL_WEIGHT_THRESHOLD ||
+            $comments_noise > self::COMMENTS_NOISE_THRESHOLD
         ) {
             $this->is_unreadable = true;
         }
@@ -299,6 +303,33 @@ class CodeStyle
         }
 
         return 0.0;
+    }
+
+    /**
+     * Check if the content contains comments noise (3 or more multiline comments in one string).
+     * @param string $content File content.
+     * @return float Normal value is < 1.00
+     */
+    private function getWeightOfCommentsNoise($content)
+    {
+        $weight = 0.0;
+
+        $lines = preg_split("/((\r?\n)|(\r\n?))/", $content);
+
+        for ( $line_num = 1; isset($lines[$line_num - 1]); $line_num++ ) {
+            try {
+                $line = $lines[$line_num - 1];
+
+                preg_match_all('#\/\*\s*\w*\s*\*\/#', $line, $this->matches);
+                if (count($this->matches[0]) >= 3) {
+                    $weight += 0.1;
+                }
+            } catch (\Exception $_e) {
+                continue;
+            }
+        }
+
+        return $weight;
     }
 
     /**
