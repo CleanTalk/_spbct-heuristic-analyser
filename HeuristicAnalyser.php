@@ -378,6 +378,7 @@ class HeuristicAnalyser
                 $this->strings->convertHexSymbolsToString($key);
                 $this->variables->updateVariablesEquation($key);
                 $this->variables->updateVariablesEquationWithConcatenation($key);
+                $this->variables->updateVariablesEquationByFakeSubstr($key);
                 $this->variables->updateArrayEquation($key);
                 $this->variables->updateArrayEquationShort($key);
                 $this->variables->updateArrayNewElement($key);
