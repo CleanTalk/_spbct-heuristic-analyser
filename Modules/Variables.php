@@ -293,7 +293,12 @@ class Variables
                         )
                     );
                 }
-                if ( isset($this->variables[$this->tokens->current->value]) ) {
+                // If the variable exists
+                if (
+                    isset($this->variables[$this->tokens->current->value]) &&
+                    is_object($this->variables[$this->tokens->current->value]) &&
+                    $this->variables[$this->tokens->current->value] instanceof ExtendedSplFixedArray
+                ) {
                     $this->variables[$this->tokens->current->value]->append($variable_tokens);
                 } else {
                     $this->variables[$this->tokens->current->value] = $variable_tokens;
@@ -344,7 +349,11 @@ class Variables
                 }
 
                 // If the variable exists
-                if ( isset($this->variables[$this->tokens->current->value]) ) {
+                if (
+                    isset($this->variables[$this->tokens->current->value]) &&
+                    is_object($this->variables[$this->tokens->current->value]) &&
+                    $this->variables[$this->tokens->current->value] instanceof ExtendedSplFixedArray
+                ) {
                     $this->variables[$this->tokens->current->value]->append($tokens_of_variable);
                 } else {
                     $this->variables[$this->tokens->current->value] = $tokens_of_variable;
@@ -560,7 +569,11 @@ class Variables
                     $this->tokens->searchForward($this->tokens[$var_first_declaration][3], ';') - 1
                 );
 
-                if ( ! isset($var_expression[2][1][$this->tokens->next2->value + 1]) ) {
+                if (
+                    !isset($this->tokens->next2->value) ||
+                    !is_numeric($this->tokens->next2->value) ||
+                    ! isset($var_expression[2][1][$this->tokens->next2->value + 1])
+                ) {
                     return;
                 }
 
@@ -682,7 +695,7 @@ class Variables
                                 $this->tokens->current->line,
                                 $this->tokens->current->key
                             );
-                        // If the variable is without quotes, like integers
+                            // If the variable is without quotes, like integers
                         } else {
                             $this->tokens['current'] = new Token(
                                 $this->variables[$variable_name][0][0],
