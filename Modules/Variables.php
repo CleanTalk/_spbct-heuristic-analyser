@@ -751,9 +751,11 @@ class Variables
      *
      * @return bool
      */
-    public function isSetOfTokensHasBadVariables($tokens)
+    public function isSetOfTokensHasBadVariables($tokens, $skip_sanitized = false)
     {
+        $counter = 0;
         foreach ( $tokens as $token ) {
+            $counter++;
             if (
                 $token->type === 'T_VARIABLE' &&
                 (
@@ -761,6 +763,17 @@ class Variables
                     in_array($token->value, $this->variables_bad, true)
                 )
             ) {
+                if ($skip_sanitized) {
+                    $sanitizing_function_names = array(
+                        'sanitize_text_field',
+                        'prepare',
+                    );
+                    $has_sanitization = $this->tokens->searchBackward($token->key, $sanitizing_function_names, $counter);
+                    $is_short_shape = $this->tokens->searchForward($token->key, '?', 10);
+                    if ($has_sanitization || $is_short_shape) {
+                        continue;
+                    }
+                }
                 return true;
             }
         }
