@@ -242,9 +242,9 @@ class CodeStyle
                     $is_short = isset($content[1]) && $content[1] === '<?';
                     if (
                         // should be whitespaces after tag
-                        $is_short && $this->tokens->next1[0] === 'T_WHITESPACE' ||
+                        ($is_short && $this->tokens->next1[0] === 'T_WHITESPACE') ||
                         // should be whitespaces or variable after tag
-                        !$is_short && in_array($this->tokens->next1[0], array('T_WHITESPACE', 'T_VARIABLE'))
+                        (!$is_short && in_array($this->tokens->next1[0], array('T_WHITESPACE', 'T_VARIABLE', 'T_FUNCTION')))
                     ) {
                         return true;
                     }

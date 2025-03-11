@@ -298,6 +298,18 @@ class HeuristicAnalyser
     }
 
     /**
+     * Do we need to skip a non-php file as not contained php code?
+     * @return bool
+     */
+    private function skipAsFileWithNoPHPCode()
+    {
+        if ( $this->extension !== 'php' && ! $this->code_style->hasPHPOpenTags() ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Process file.
      * Do all the work
      *
@@ -309,7 +321,7 @@ class HeuristicAnalyser
     public function processContent()
     {
         // Skip files does not contain PHP code
-        if ( $this->extension !== 'php' && ! $this->code_style->hasPHPOpenTags() ) {
+        if ( $this->skipAsFileWithNoPHPCode() ) {
             return;
         }
 
@@ -619,8 +631,8 @@ class HeuristicAnalyser
         }
 
         return $token->type === 'T_CONSTANT_ENCAPSED_STRING' &&
-            is_callable(trim((string)$token->value, '\'')) &&
-            in_array(trim((string)$token->value, '\''), $this->dangerous_decoded_values, true);
+               is_callable(trim((string)$token->value, '\'')) &&
+               in_array(trim((string)$token->value, '\''), $this->dangerous_decoded_values, true);
     }
 
     private function checkingDecryptedToken(DataStructures\Token $token)
