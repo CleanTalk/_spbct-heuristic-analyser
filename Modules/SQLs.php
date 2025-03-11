@@ -124,13 +124,13 @@ class SQLs
                 (string) $this->tokens->current->value
             ) // @todo use stripos() instead of preg_match()
         ) {
-            $sql = $this->tokens->getRange(
-                (int) $this->tokens->searchBackward($key, ['=', '(']),
-                $this->tokens->searchForward($key, [')', ';'])
-            );
-
-            if ( $sql ) {
-                $this->processRequest($sql);
+            $sql_start = $this->tokens->searchBackward($key, '=');
+            $sql_end = $this->tokens->searchForward($key, ';');
+            if (false !== $sql_start && false !== $sql_end) {
+                $sql = $this->tokens->getRange($sql_start, $sql_end);
+                if ( $sql ) {
+                    $this->processRequest($sql);
+                }
             }
         }
     }
@@ -164,7 +164,7 @@ class SQLs
         }
 
         // Checking for bad variables in SQL request
-        $good = ! $this->variables->isSetOfTokensHasBadVariables($sql);
+        $good = ! $this->variables->isSetOfTokensHasBadVariables($sql, true);
 
         $this->requests[] = array(
             'sql'          => $sql,

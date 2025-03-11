@@ -297,14 +297,14 @@ class Tokens implements \Iterator, \ArrayAccess, \Countable
     {
         // Needle is an array with strings
         if ( is_array($needle) || $needle instanceof ExtendedSplFixedArray ) {
-            for ( $i = 0, $key = $start - 1; $i < $depth && $key > 0; $i--, $key-- ) {
+            for ( $i = 0, $key = $start - 1; $i >= $depth * -1 && $key > 0; $i--, $key-- ) {
                 if ( isset($this->tokens[$key]) && in_array($this->tokens[$key]->value, $needle, true) ) {
                     return $key;
                 }
             }
             // Needle is a string
         } else {
-            for ( $i = 0, $key = $start - 1; $i < $depth && $key > 0; $i--, $key-- ) {
+            for ( $i = 0, $key = $start - 1; $i >= $depth * -1 && $key > 0; $i--, $key-- ) {
                 if ( isset($this->tokens[$key]) && $this->tokens[$key]->value === $needle ) {
                     return $key;
                 }
