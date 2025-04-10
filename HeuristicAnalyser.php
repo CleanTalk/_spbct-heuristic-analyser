@@ -33,6 +33,10 @@ class HeuristicAnalyser
 {
     // Constants
     const HEURISTIC_SCAN_MAX_FILE_SIZE = 524288; // 512 KB
+    /**
+     * Maximum number of keys to return in the entropy verdict. This is to prevent the verdict from being too large.
+     */
+    const HEURISTIC_MAX_ENTROPY_VERDICT_KEYS = 10;
 
     // Current file attributes
     /**
@@ -234,10 +238,10 @@ class HeuristicAnalyser
         $currentMemoryLimitBytes =  $this->convertToBytes($currentMemoryLimit);
         $compareValueBytes = $this->convertToBytes('256M');
 
-        if ($currentMemoryLimitBytes >= $compareValueBytes) {
+        if ($currentMemoryLimit === '-1' || $currentMemoryLimitBytes >= $compareValueBytes) {
             if ( isset($input['path']) && version_compare(PHP_VERSION, '8.1', '>=') && extension_loaded('mbstring') ) {
                 // Do not run entropy analysis on included constructs
-                $this->entropyAnalyser = new Entropy($input['path']);
+                $this->entropyAnalyser = new Entropy($input['path'], $this->tokens);
             }
         }
     }
@@ -434,7 +438,7 @@ class HeuristicAnalyser
         // Detecting bad variables
         $this->variables->detectBad();
         if ( $this->entropyAnalyser ) {
-            $this->entropyAnalyser->analyse($this->variables);
+            $this->entropyAnalyser->extractSuspiciousVariables($this->variables);
         }
 
         /** Gather the results of scanning */
@@ -549,8 +553,12 @@ class HeuristicAnalyser
             }
         }
 
-        if ( $this->entropyAnalyser && $this->entropyAnalyser->getVerdict() ) {
-            $this->verdict['SUSPICIOUS'] = $this->entropyAnalyser->getVerdict();
+        $entropy_verdict_final = $this->entropyAnalyser ?
+            $this->entropyAnalyser->getEntropyVerdict(static::HEURISTIC_MAX_ENTROPY_VERDICT_KEYS) :
+            null;
+
+        if ( $entropy_verdict_final ) {
+            $this->verdict['SUSPICIOUS'] = $entropy_verdict_final;
         }
 
         // Detecting JavaScript injection in HTML
