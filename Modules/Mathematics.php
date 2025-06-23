@@ -41,8 +41,8 @@ class Mathematics
                         // Getting only value of the token $_index
                         $expression_string .= $token_inside_brackets[1];
                     }
-                    // Check if the string is the math expression
-                    if ( preg_match('@^([-+]? ?(\d+|\(\g<1>\))( ?[-+*\/] ?\g<1>)?)$@', $expression_string) ) {
+
+                    if ( self::isValidMathPHPSyntax($expression_string) ) {
                         $math_expressions[] = $expression_string;
                         $math_result = eval('return ' . $expression_string . ';');
 
@@ -113,5 +113,47 @@ class Mathematics
             $tokens_inside_brackets = $this->tokens->getRange($start_position, $closing_bracket_position - 1);
         }
         return $tokens_inside_brackets;
+    }
+
+    /**
+     * Validate math string.
+     * @param $string
+     *
+     * @return bool
+     */
+    public static function isValidMathPHPSyntax($string)
+    {
+        /**
+         * This regex validates and parses arithmetic expressions while preventing consecutive operators (e.g., `++`, `--`).
+         *
+         * Structure:
+         * ^ ... $                     - Matches the entire string from start to end.
+         *
+         * Main Components:
+         * 1. Optional unary operator [+-] followed by optional space:
+         *    [-+]? ?                  - E.g., "-5", "+ 3", or "42" (no unary operator).
+         *
+         * 2. Number or nested sub-expression:
+         *    (\d+|\(\g<1>\))          - Matches either:
+         *                              - \d+       → One or more digits (e.g., "123").
+         *                              - \(\g<1>\) → Recursive sub-expression in parentheses (e.g., "(1 + 2)").
+         *
+         * 3. Optional binary operation (with checks for consecutive operators):
+         *    ( ?([-+*\/](?!\g<4>)) ?\g<1>)?
+         *                              - ? (...) ? → Wrapped in optional groups (may or may not exist).
+         *                              - [-+*\/]   → Matches an operator (+, -, *, /).
+         *                              - (?!\g<4>) → Negative lookahead to prevent the same operator twice (e.g., blocks "++").
+         *                              - \g<1>     → Recursively matches the rest of the expression.
+         *
+         * Examples:
+         * - Valid: "1 + 2", "3*(4-5)", "-1 / 2", "1 + (2 * 3)".
+         * - Invalid: "1++2", "3--4", "1 + + 2" (consecutive operators).
+         *
+         * Note: Uses recursive regex (\g<1>), which requires PCRE (PHP/Perl-compatible) engine.
+         */
+        // This regex validates and parses arithmetic expressions while preventing consecutive operators (e.g., `++`, `--`).
+        $regex = '/^([-+]? ?(\d+|\(\g<1>\))( ?([-+*\/](?!\g<4>)) ?\g<1>)?)$/';
+        $res = preg_match_all($regex, $string, $matches, PREG_SET_ORDER);
+        return $res > 0;
     }
 }
