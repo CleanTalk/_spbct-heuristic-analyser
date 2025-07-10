@@ -66,7 +66,7 @@ class Entropy
     /**
      * @var array
      */
-    private $suspicious_array_calls = [];
+    private $suspicious_array_calls = array();
 
     /**
      * Path to the file
@@ -104,7 +104,7 @@ class Entropy
      * @param Variables $variables
      * @return void
      */
-    public function extractSuspiciousVariables(Variables $variables)
+    public function extractSuspiciousVariables($variables)
     {
         if ( !$this->is_file_suspicious ) {
             return;
@@ -120,7 +120,7 @@ class Entropy
                 return;
             }
 
-            $detected_unreadable_variables = [];
+            $detected_unreadable_variables = array();
             foreach ( $variable_names as $variable ) {
                 // do not change empty state! this change is from heur package!
                 if ( empty($variables_obj[$variable]) ) {
@@ -138,7 +138,7 @@ class Entropy
                     ? (int)$variables_obj[$variable][0][2]
                     : null;
                 if ( $res < static::SUSPICIOUS_VARIABLES_THRESHOLD && null !== $line_number_met_on ) {
-                    $detected_unreadable_variables[$line_number_met_on] = [static::ENTROPY_VERDICT_VARIABLES_HIGH_ENTROPY_NAME];
+                    $detected_unreadable_variables[$line_number_met_on] = array(static::ENTROPY_VERDICT_VARIABLES_HIGH_ENTROPY_NAME);
                 }
             }
 
@@ -176,7 +176,7 @@ class Entropy
     {
         $variable_names = $this->extractVariableNames();
 
-        $filtered_names = [];
+        $filtered_names = array();
 
         foreach ( $variable_names as $variable_name ) {
             if ( strpos($variable_name, '_') !== 0 && strlen($variable_name) >= static::SUSPICIOUS_VARIABLES_MIN_LENGTH ) {
@@ -232,9 +232,9 @@ class Entropy
      */
     private function analyzeArrayKeysEntropy()
     {
-        $output = [];
+        $output = array();
         $array_keys_calls = $this->extractArrayKeysWordLike();
-        $filtered_keys = [];
+        $filtered_keys = array();
 
         foreach ( $array_keys_calls as $key ) {
             if ( strlen($key) >= static::SUSPICIOUS_ARRAY_KEYS_ENTROPY__MIN_KEY_LENGTH ) {
@@ -267,7 +267,7 @@ class Entropy
                     if ( (float)$res < static::SUSPICIOUS_ARRAY_KEYS_ENTROPY__THRESHOLD * static::SUSPICIOUS_ARRAY_KEYS_ENTROPY__VERDICT_SHOWN_MULTIPLIER ) {
                         $found_on_lines = static::findRowsNumWithPattern($this->path_to_file, '/\[\'' . $key . '\'\]/');
                         foreach ( $found_on_lines as $line_num ) {
-                            $output[$line_num] = [static::ENTROPY_VERDICT_ARRAY_KEYS_HIGH_ENTROPY_NAME];
+                            $output[$line_num] = array(static::ENTROPY_VERDICT_ARRAY_KEYS_HIGH_ENTROPY_NAME);
                         }
                     }
                 }
@@ -283,15 +283,15 @@ class Entropy
      */
     private function analyzeArrayKeysLongInt()
     {
-        $output = [];
+        $output = array();
         $array_keys_int = $this->extractArrayKeysIntLike();
         $total_int_keys_calls = count($array_keys_int);
-        $probably_long_int = [];
+        $probably_long_int = array();
         foreach ($array_keys_int as $int) {
             if (strlen($int) >= static::SUSPICIOUS_ARRAY_KEYS_LONGINT__MIN_KEY_LENGTH) {
                 $found_on_lines = static::findRowsNumWithPattern($this->path_to_file, '/\[' . $int . '\]/');
                 foreach ($found_on_lines as $line_num) {
-                    $probably_long_int[$line_num] = [static::ENTROPY_VERDICT_ARRAY_KEYS_LONGINT_NAME];
+                    $probably_long_int[$line_num] = array(static::ENTROPY_VERDICT_ARRAY_KEYS_LONGINT_NAME);
                 }
             }
         }
@@ -343,7 +343,7 @@ class Entropy
     private static function extractContentByRegexp($content, $pattern)
     {
         preg_match_all($pattern, $content, $matches);
-        return isset($matches[1]) ? $matches[1] : [];
+        return isset($matches[1]) ? $matches[1] : array();
     }
 
     /**
@@ -355,7 +355,7 @@ class Entropy
      */
     private static function findRowsNumWithPattern($filePath, $pattern)
     {
-        $result = [];
+        $result = array();
         if (!class_exists('\SplFileObject')) {
             return array();
         }
@@ -397,8 +397,8 @@ class Entropy
      */
     private static function reduceVerdict($verdict, $max_keys)
     {
-        $verdict_of_array_checks = [];
-        $verdict_other = [];
+        $verdict_of_array_checks = array();
+        $verdict_other = array();
         // we need to separate array checks from other checks
         foreach ($verdict as $line => $value) {
             if (is_array($value)) {
@@ -436,7 +436,7 @@ class Entropy
     private static function halfVerdictArray($array, $max_keys)
     {
         $counter = 3; //save first elem always
-        $halfed = [];
+        $halfed = array();
         foreach ($array as $index => $value) {
             $counter++;
             if ($counter % 2 == 1) {
