@@ -91,7 +91,7 @@ class Encoder
         $bpeTokens = array();
         foreach ($matches[0] as $token) {
             $token = mb_convert_encoding((string) $token, "UTF-8", "ISO-8859-1");
-            $characters = $this->mb_str_split_compat($token);
+            $characters = $this->mbStrSplitCompat($token);
 
             $resultWord = '';
             foreach ($characters as $char) {
@@ -112,7 +112,7 @@ class Encoder
         return $bpeTokens;
     }
 
-    private function mb_str_split_compat($string)
+    private function mbStrSplitCompat($string)
     {
         // PHP 7.4+: mb_str_split exists, PHP 5.6: use preg_split
         if (function_exists('mb_str_split')) {
@@ -214,7 +214,7 @@ class Encoder
             return $this->bpeCache[$token];
         }
 
-        $word = $this->mb_str_split_compat($token);
+        $word = $this->mbStrSplitCompat($token);
         $initialLength = count($word);
         $pairs = $this->buildSymbolPairs($word);
         if (empty($pairs)) {
