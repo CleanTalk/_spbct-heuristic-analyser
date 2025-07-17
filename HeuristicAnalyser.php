@@ -239,7 +239,7 @@ class HeuristicAnalyser
         $compareValueBytes = $this->convertToBytes('256M');
 
         if ($currentMemoryLimit === '-1' || $currentMemoryLimitBytes >= $compareValueBytes) {
-            if ( isset($input['path']) && version_compare(PHP_VERSION, '8.1', '>=') && extension_loaded('mbstring') ) {
+            if ( isset($input['path']) && extension_loaded('mbstring') ) {
                 // Do not run entropy analysis on included constructs
                 $this->entropyAnalyser = new Entropy($input['path'], $this->tokens);
             }
