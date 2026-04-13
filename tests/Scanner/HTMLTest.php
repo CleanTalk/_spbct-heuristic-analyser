@@ -8,7 +8,7 @@ class HTMLTest extends TestCase
 {
     private $html;
 
-    public function setUp()
+    public function setUp(): void
     {
         $file_content = "<?php
         echo(

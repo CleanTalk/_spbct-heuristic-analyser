@@ -8,7 +8,7 @@ class TokensTest extends TestCase
 {
     private $tokens;
 
-    public function setUp()
+    public function setUp(): void
     {
         $file_content = "<?php
             echo('hello');        

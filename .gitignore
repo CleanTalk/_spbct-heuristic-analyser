@@ -4,3 +4,4 @@ composer.lock
 package-lock.json
 /lib/
 /bad/
+tests/.phpunit.result.cache

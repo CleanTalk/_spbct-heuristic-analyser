@@ -11,7 +11,7 @@ class NoPHPCodeTest extends TestCase
 
     private $files_list;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->current_dir = __DIR__ . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR;
         $this->heuristic_scanner = new Controller();
