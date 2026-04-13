@@ -146,7 +146,7 @@ class Strings
                 }
             }
 
-            if ( $path && file_exists($path) ) {
+            if ( $path && file_exists($path) && is_file($path) ) {
                 // Delete tokens which contained the file_get_contents expression
                 for ( $i = $start_position; $i <= $closing_bracket_position; $i++ ) {
                     $this->tokens->unsetTokens($i);
