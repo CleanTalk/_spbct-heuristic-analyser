@@ -230,25 +230,40 @@ class CodeStyle
     }
 
     /**
-     * Check if file contains PHP open tags ("<\?php" or `<\?`).
+     * Check if file contains PHP open tags ("<\?php", `<\?`, or `<?=`).
+     * Used to decide whether a non-.php file still needs heuristic analysis
+     * (e.g. .js include with PHP payload).
+     *
+     * Note: PHP tokenizer often keeps the newline inside T_OPEN_TAG ("<?php\n"),
+     * so the next token may be T_EVAL / T_STRING / etc. — not only whitespace.
+     *
      * @return bool
      */
     public function hasPHPOpenTags()
     {
         foreach ( $this->tokens as $_token => $content ) {
-            if ( isset($content[0]) && isset($this->tokens->next1[0]) ) {
-                if ( $content[0] === 'T_OPEN_TAG' ) {
-                    //check if open tag is short
-                    $is_short = isset($content[1]) && $content[1] === '<?';
-                    if (
-                        // should be whitespaces after tag
-                        ($is_short && $this->tokens->next1[0] === 'T_WHITESPACE') ||
-                        // should be whitespaces or variable after tag
-                        (!$is_short && in_array($this->tokens->next1[0], array('T_WHITESPACE', 'T_VARIABLE', 'T_FUNCTION')))
-                    ) {
-                        return true;
-                    }
-                }
+            if ( ! isset($content[0]) ) {
+                continue;
+            }
+
+            // <?= is always PHP
+            if ( $content[0] === 'T_OPEN_TAG_WITH_ECHO' ) {
+                return true;
+            }
+
+            if ( $content[0] !== 'T_OPEN_TAG' ) {
+                continue;
+            }
+
+            // Full <?php tag is enough — whitespace may be part of the tag token.
+            $is_short = isset($content[1]) && $content[1] === '<?';
+            if ( ! $is_short ) {
+                return true;
+            }
+
+            // Short <? must be followed by whitespace to avoid <?xml and similar.
+            if ( isset($this->tokens->next1[0]) && $this->tokens->next1[0] === 'T_WHITESPACE' ) {
+                return true;
             }
         }
 

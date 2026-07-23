@@ -13,6 +13,13 @@ class Variables
     public $constants = array();
 
     /**
+     * Directory of the file being analysed (for __DIR__ replacement).
+     *
+     * @var string|null
+     */
+    private $analysis_directory;
+
+    /**
      * @var Tokens
      */
     public $tokens;
@@ -56,6 +63,25 @@ class Variables
     public function __construct(Tokens $tokens)
     {
         $this->tokens = $tokens;
+    }
+
+    /**
+     * Seed CMS / runtime constants so constructs like ABSPATH . 'file.php' can be resolved.
+     *
+     * @param string|null $analysis_directory Directory of the scanned file (for __DIR__)
+     *
+     * @return void
+     */
+    public function seedKnownCmsConstants($analysis_directory = null)
+    {
+        $this->analysis_directory = $analysis_directory ? (string) $analysis_directory : null;
+
+        $known = array('ABSPATH', 'WP_CONTENT_DIR', 'WP_PLUGIN_DIR', 'WPINC', 'DIRECTORY_SEPARATOR');
+        foreach ( $known as $name ) {
+            if ( defined($name) ) {
+                $this->constants[$name] = (string) constant($name);
+            }
+        }
     }
 
     /**
@@ -714,6 +740,20 @@ class Variables
             $this->tokens['current'] = new Token(
                 'T_CONSTANT_ENCAPSED_STRING',
                 '\'' . $this->constants[$this->tokens->current->value] . '\'',
+                $this->tokens->current->line,
+                $this->tokens->current->key
+            );
+        } elseif (
+            // __DIR__ → directory of the analysed file
+            $this->analysis_directory !== null &&
+            (
+                $this->tokens->current->type === 'T_DIR' ||
+                ($this->tokens->current->type === 'T_STRING' && $this->tokens->current->value === '__DIR__')
+            )
+        ) {
+            $this->tokens['current'] = new Token(
+                'T_CONSTANT_ENCAPSED_STRING',
+                '\'' . rtrim($this->analysis_directory, '/\\') . DIRECTORY_SEPARATOR . '\'',
                 $this->tokens->current->line,
                 $this->tokens->current->key
             );

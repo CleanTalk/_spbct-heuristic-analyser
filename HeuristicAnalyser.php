@@ -228,6 +228,8 @@ class HeuristicAnalyser
         $this->mathematics     = new Mathematics($this->tokens);
         $this->strings         = new Strings($this->tokens);
         $this->variables       = new Variables($this->tokens);
+        // Allow resolving ABSPATH . 'path' / __DIR__ . 'path' during include analysis (#36876)
+        $this->variables->seedKnownCmsConstants($this->is_text ? null : $this->curr_dir);
         $this->sqls            = new SQLs($this->tokens, $this->variables);
         $this->transformations = new Transformations($this->tokens);
         $this->includes        = new Includes($this->tokens, $this->variables, $this->curr_dir, $this->is_text);
