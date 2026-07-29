@@ -43,8 +43,20 @@ class Mathematics
                     }
 
                     if ( self::isValidMathPHPSyntax($expression_string) ) {
+                        try {
+                            // @ suppresses PHP 7.x division-by-zero warnings; PHP 8+ throws (caught below)
+                            $math_result = @eval('return ' . $expression_string . ';');
+                        } catch (\Throwable $e) {
+                            // e.g. DivisionByZeroError on "1/0" (PHP 8+) — skip, keep original tokens
+                            continue;
+                        }
+
+                        // PHP 7.x: 1/0 yields INF/NAN with a warning instead of an exception
+                        if ( ! is_numeric($math_result) || (is_float($math_result) && ! is_finite($math_result)) ) {
+                            continue;
+                        }
+
                         $math_expressions[] = $expression_string;
-                        $math_result = eval('return ' . $expression_string . ';');
 
                         if ( $bracket[0] === '[' ) {
                             $index_to_insert = 'next1';

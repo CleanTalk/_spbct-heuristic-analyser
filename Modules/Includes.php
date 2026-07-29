@@ -143,7 +143,7 @@ class Includes
             'is_absolute' => null, // Is path to file is absolute
             'name'        => '',   // Filename
             'error_free'  => true, // Checking for error ignoring "@" before include
-            'not_url'     => true, // Is the path a URL
+            'not_url'     => true, // true = local path, false = remote URL
             'good'        => true, // Contains bad variables with user input
             'status'      => true, // Overall result. Good (true) by default
             'exists'      => true, // Is the file exists
@@ -160,8 +160,9 @@ class Includes
             $this->fillPathProperties($properties, $path, $file_exists);
         }
 
-        // Gather result in one flag
-        $properties['status'] = $properties['good'] && ! $properties['not_url'] && $properties['ext_good'];
+        // Good = local include with a safe extension and without user-controlled variables.
+        // Remote URLs must not get status=true (previously "! not_url" inverted this).
+        $properties['status'] = $properties['good'] && $properties['not_url'] && $properties['ext_good'];
 
         // Adding include directive itself to the "include"
         array_unshift($properties['include'], $this->tokens->current);

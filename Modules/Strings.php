@@ -3,6 +3,7 @@
 namespace CleantalkSP\Common\Scanner\HeuristicAnalyser\Modules;
 
 use CleantalkSP\Common\Scanner\HeuristicAnalyser\DataStructures\Token;
+use CleantalkSP\Common\Scanner\HeuristicAnalyser\HeuristicAnalyser;
 
 class Strings
 {
@@ -146,21 +147,96 @@ class Strings
                 }
             }
 
-            if ( $path && file_exists($path) && is_file($path) ) {
-                // Delete tokens which contained the file_get_contents expression
-                for ( $i = $start_position; $i <= $closing_bracket_position; $i++ ) {
-                    $this->tokens->unsetTokens($i);
-                }
+            $resolved_path = $this->resolveSafeLocalFilePath($path);
+            if ( $resolved_path === null ) {
+                return;
+            }
 
-                // Insert newly calculated token with gathered content string
-                $this->tokens['current'] = new Token(
-                    'T_LNUMBER',
-                    @file_get_contents($path),
-                    $this->tokens->current->line,
-                    $this->tokens->current->key
-                );
+            $content = @file_get_contents(
+                $resolved_path,
+                false,
+                null,
+                0,
+                HeuristicAnalyser::HEURISTIC_SCAN_MAX_FILE_SIZE
+            );
+            if ( $content === false ) {
+                return;
+            }
+
+            // Delete tokens which contained the file_get_contents expression
+            for ( $i = $start_position; $i <= $closing_bracket_position; $i++ ) {
+                $this->tokens->unsetTokens($i);
+            }
+
+            // Insert newly calculated token with gathered content string
+            $this->tokens['current'] = new Token(
+                'T_CONSTANT_ENCAPSED_STRING',
+                "'" . addcslashes($content, "\\'") . "'",
+                $this->tokens->current->line,
+                $this->tokens->current->key
+            );
+        }
+    }
+
+    /**
+     * Resolve a local readable file path for heuristic analysis.
+     * Rejects stream wrappers, symlinks, oversized files and paths outside the site root.
+     *
+     * @param string $path
+     *
+     * @return string|null Absolute real path or null if unsafe / unreadable
+     */
+    private function resolveSafeLocalFilePath($path)
+    {
+        if ( ! is_string($path) || $path === '' ) {
+            return null;
+        }
+
+        // Reject stream wrappers (php://, file://, phar://, http://, ...)
+        if ( preg_match('#^[a-zA-Z0-9+.-]+://#', $path) ) {
+            return null;
+        }
+
+        if ( ! file_exists($path) || ! is_file($path) || is_link($path) ) {
+            return null;
+        }
+
+        $real_path = realpath($path);
+        if ( $real_path === false || ! is_file($real_path) ) {
+            return null;
+        }
+
+        $file_size = @filesize($real_path);
+        if ( $file_size === false || $file_size > HeuristicAnalyser::HEURISTIC_SCAN_MAX_FILE_SIZE ) {
+            return null;
+        }
+
+        if ( defined('ABSPATH') ) {
+            $site_root = realpath(ABSPATH);
+            if ( $site_root === false || ! $this->isPathInsideDirectory($real_path, $site_root) ) {
+                return null;
             }
         }
+
+        return $real_path;
+    }
+
+    /**
+     * @param string $path Absolute real path to a file
+     * @param string $directory Absolute real path to an allowed root directory
+     *
+     * @return bool
+     */
+    private function isPathInsideDirectory($path, $directory)
+    {
+        $path      = str_replace('\\', '/', $path);
+        $directory = rtrim(str_replace('\\', '/', $directory), '/') . '/';
+
+        if ( DIRECTORY_SEPARATOR === '\\' ) {
+            return stripos($path, $directory) === 0;
+        }
+
+        return strpos($path, $directory) === 0;
     }
 
     /**

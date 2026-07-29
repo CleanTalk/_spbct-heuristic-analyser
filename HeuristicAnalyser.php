@@ -527,20 +527,19 @@ class HeuristicAnalyser
 
         // Adding bad includes to $verdict['SEVERITY']['string_num'] = 'whole string with include'
         foreach ( $this->includes->includes as $include ) {
-            if ( $include['status'] === false ) {
-                if ( $include['not_url'] === false && $include['ext_good'] === false ) {
-                    $this->verdict['SUSPICIOUS'][$include['string']][] = substr(
-                        $this->tokens->glueTokens(ExtendedSplFixedArray::createFromArray($include['include'])),
-                        0,
-                        255
-                    );
-                } elseif ( $include['good'] === false ) {
-                    $this->verdict['SUSPICIOUS'][$include['string']][] = substr(
-                        $this->tokens->glueTokens(ExtendedSplFixedArray::createFromArray($include['include'])),
-                        0,
-                        255
-                    );
-                }
+            // Remote URL includes are always suspicious (incl. .php/.inc — previously missed).
+            if ( $include['not_url'] === false ) {
+                $this->verdict['SUSPICIOUS'][$include['string']][] = substr(
+                    $this->tokens->glueTokens(ExtendedSplFixedArray::createFromArray($include['include'])),
+                    0,
+                    255
+                );
+            } elseif ( $include['status'] === false && $include['good'] === false ) {
+                $this->verdict['SUSPICIOUS'][$include['string']][] = substr(
+                    $this->tokens->glueTokens(ExtendedSplFixedArray::createFromArray($include['include'])),
+                    0,
+                    255
+                );
             }
         }
 
