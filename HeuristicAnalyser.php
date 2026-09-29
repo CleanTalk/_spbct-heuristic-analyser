@@ -639,9 +639,13 @@ class HeuristicAnalyser
             return false;
         }
 
-        return $token->type === 'T_CONSTANT_ENCAPSED_STRING' &&
-               is_callable(trim((string)$token->value, '\'')) &&
-               in_array(trim((string)$token->value, '\''), $this->dangerous_decoded_values, true);
+        if ( $token->type !== 'T_CONSTANT_ENCAPSED_STRING' ) {
+            return false;
+        }
+
+        $value = trim((string)$token->value, '\'');
+
+        return in_array($value, $this->dangerous_decoded_values, true);
     }
 
     private function checkingDecryptedToken(DataStructures\Token $token)
